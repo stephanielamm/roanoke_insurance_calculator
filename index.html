@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- jquery CDN -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <style>
+  /* your styles go here */
+  .ins-dropdown {
+    font-size: 16px;
+    display: inline-block;
+  }
+  .ins-button {
+    font-size: 16px;
+    display: inline-block;
+    margin-top: 20px;
+    border-radius: 8px;
+  }
+  .intro-text {
+    font-size: 18px;
+  }
+  .result {
+    font-size: 20px;
+  }
+  </style>
+</head>
+<body>
+
+<!-- you should check to make sure the numbers are right because the image was hard to read -->
+<p class="intro-text">Select a plan</p>
+<select class="ins-dropdown" id="plans">
+  <option value="plan 1" data-base="253.97">Plan 1</option>
+  <option value="plan 2" data-base="303.06">Plan 2</option>
+  <option value="plan 3" data-base="326.39">Plan 3</option>
+  <option value="plan 4" data-base="314.78">Plan 4</option>
+  <option value="plan 5" data-base="329.14">Plan 5</option>
+  <option value="plan 6" data-base="338.61">Plan 6</option>
+  <option value="plan 7" data-base="435.55">Plan 7</option>
+  <option value="plan 8" data-base="512.17">Plan 8</option>
+  <option value="plan 9" data-base="595.91">Plan 9</option>
+</select>
+</br>
+<p class="intro-text">Select your age</p>
+<select class="ins-dropdown" id="age">
+  <option value="0 - 14" data-ageFactor="0.7650">0 - 14</option>
+  <option value="15" data-ageFactor="0.833">15</option>
+  <option value="16" data-ageFactor="0.859">16</option>
+  <option value="17" data-ageFactor="0.885">17</option>
+  <option value="18" data-ageFactor="0.913">18</option>
+  <option value="19" data-ageFactor="0.941">19</option>
+  <option value="20" data-ageFactor="0.97">20</option>
+  <option value="21" data-ageFactor="1">21</option>
+  <option value="22" data-ageFactor="1">22</option>
+  <option value="23" data-ageFactor="1">23</option>
+  <option value="24" data-ageFactor="1">24</option>
+  <option value="25" data-ageFactor="1.004">25</option>
+  <option value="26" data-ageFactor="1.024">26</option>
+  <option value="27" data-ageFactor="1.048">27</option>
+  <option value="28" data-ageFactor="1.087">28</option>
+  <option value="29" data-ageFactor="1.119">29</option>
+  <option value="30" data-ageFactor="1.135">30</option>
+  <option value="31" data-ageFactor="1.159">31</option>
+  <option value="32" data-ageFactor="1.183">32</option>
+  <option value="33" data-ageFactor="1.198">33</option>
+  <option value="34" data-ageFactor="1.214">34</option>
+  <option value="35" data-ageFactor="1.222">35</option>
+  <option value="36" data-ageFactor="1.23">36</option>
+  <option value="37" data-ageFactor="1.238">37</option>
+  <option value="38" data-ageFactor="1.246">38</option>
+  <option value="39" data-ageFactor="1.262">39</option>
+  <option value="40" data-ageFactor="1.278">40</option>
+  <option value="41" data-ageFactor="1.302">41</option>
+  <option value="42" data-ageFactor="1.325">42</option>
+  <option value="43" data-ageFactor="1.357">43</option>
+  <option value="44" data-ageFactor="1.397">44</option>
+  <option value="45" data-ageFactor="1.444">45</option>
+  <option value="46" data-ageFactor="1.5">46</option>
+  <option value="47" data-ageFactor="1.563">47</option>
+  <option value="48" data-ageFactor="1.635">48</option>
+  <option value="49" data-ageFactor="1.706">49</option>
+  <option value="50" data-ageFactor="1.786">50</option>
+  <option value="51" data-ageFactor="1.865">51</option>
+  <option value="52" data-ageFactor="1.952">52</option>
+  <option value="53" data-ageFactor="2.04">53</option>
+  <option value="54" data-ageFactor="2.135">54</option>
+  <option value="55" data-ageFactor="2.23">55</option>
+  <option value="56" data-ageFactor="2.333">56</option>
+  <option value="57" data-ageFactor="2.437">57</option>
+  <option value="58" data-ageFactor="2.548">58</option>
+  <option value="59" data-ageFactor="2.603">59</option>
+  <option value="60" data-ageFactor="2.714">60</option>
+  <option value="61" data-ageFactor="2.81">61</option>
+  <option value="62" data-ageFactor="2.873">62</option>
+  <option value="63" data-ageFactor="2.952">63</option>
+  <option value="64+" data-ageFactor="3">64+</option>
+</select>
+<p class="intro-text">Do you smoke?</p>
+<select class="ins-dropdown" id="smoker">
+  <option value="no" data-smokeSelection="0">No</option>
+  <option value="yes" data-smokeSelection="1">Yes</option>
+</select>
+</br>
+<button id="ins-button" class="ins-button">Get rate</button>
+
+<p class="result">
+  Your rate is <span id="customRate"></span>
+</p>
+
+<script>
+$('document').ready(function() {
+
+  $('#ins-button').click(function() {
+    // each of these grabs the data-base number from the selected item and saves it as that variable
+    var baseRate = parseFloat($('#plans').find(':selected').attr('data-base'));
+    var ageFactor = parseFloat($('#age').find(':selected').attr('data-ageFactor'));
+    var smokeSelection = parseFloat($('#smoker').find(':selected').attr('data-smokeSelection'));
+    var smokeFactor;
+
+    // this is ugly but basically the tobacco factor increases by .05 for certain age brackets.
+    // so I found those age brackets, got their ageFactor value, and made smokeFactor depend on their ageFactor
+    // and whether they checked "yes" or "no" on the smoking dropdown.
+    // If they checked "no" their smokeFactor is 1.
+if (ageFactor >= 0.765 && ageFactor <= 0.885 && smokeSelection == 1) {
+    smokeFactor = 1;
+  } else if (ageFactor >= 0.9130 && ageFactor <= 1 && smokeSelection == 1){
+    smokeFactor = 1.05;
+  } else if (ageFactor >= 1.004 && ageFactor <= 1.119 && smokeSelection == 1){
+    smokeFactor = 1.1;
+  } else if (ageFactor >= 1.135 && ageFactor <= 1.262 && smokeSelection == 1){
+    smokeFactor = 1.15;
+  } else if (ageFactor >= 1.278 && ageFactor <= 1.706 && smokeSelection == 1){
+   smokeFactor = 1.2;
+  } else if (ageFactor >= 1.786 && ageFactor <= 2.603 && smokeSelection == 1){
+    smokeFactor = 1.25;
+  } else if (ageFactor >= 2.714 && ageFactor <= 3 && smokeSelection == 1){
+    smokeFactor = 1.3;
+  } else {
+    smokeFactor = 1;
+  }
+
+    console.log(baseRate, ageFactor, smokeFactor);
+
+    // calculates the resulting rate by multiplying each of the variables
+    var rate = (baseRate * ageFactor) * smokeFactor;
+
+   // converts the resulting rate into a string and adds a dollar sign
+    rate = rate.toLocaleString( {style: 'currency', currency: 'USD' });
+    $('#customRate').html("$" + rate);
+  })
+
+});
+</script>
+</body>
+
+</html>
